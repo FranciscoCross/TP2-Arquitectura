@@ -57,49 +57,57 @@ module uart-rx
         
         case (state_reg)
             idle:
-                if (~rx) 
-                    begin
-                        state_next = start;
-                        s_next = 0;     
-                    end
+                begin
+                    if (~rx) 
+                        begin
+                            state_next = start;
+                            s_next = 0;     
+                        end
+                end
             start:
-                if (s_tick) 
-                    begin
-                        if (s_reg == 7)
-                            begin
-                                state_next = data;
-                                s_next = 0;
-                                n_next = 0;
-                            end    
-                    end
-                else
-                    s_next = s_reg + 1;
+                begin
+                    if (s_tick) 
+                        begin
+                            if (s_reg == 7)
+                                begin
+                                    state_next = data;
+                                    s_next = 0;
+                                    n_next = 0;
+                                end    
+                        end
+                    else
+                        s_next = s_reg + 1;
+                end
             data:
-                if (s_tick)
-                    begin
-                        if (s_reg == 15)
-                            begin
-                                s_next = 0;
-                                b_next = {rx, b_reg[NB_BIT - 1:1]};
-                                if(n_reg == (DBIT-1))
-                                    state_next = stop;
-                                else
-                                    n_next = n_reg + 1;    
-                            end    
-                    end
-                else
-                    s_next = s_reg + 1;
+                begin
+                    if (s_tick)
+                        begin
+                            if (s_reg == 15)
+                                begin
+                                    s_next = 0;
+                                    b_next = {rx, b_reg[NB_BIT - 1:1]};
+                                    if(n_reg == (DBIT-1))
+                                        state_next = stop;
+                                    else
+                                        n_next = n_reg + 1;    
+                                end    
+                        end
+                    else
+                        s_next = s_reg + 1;
+                end
             stop:
-                if (s_tick)
-                    begin
-                        if (s_reg == (SB_TICK - 1))
-                            begin
-                                state_next = idle;
-                                rx_done_tick = 1'b1;
-                            end
-                        else
-                            s_next = s_reg + 1;
-                    end
+                begin
+                    if (s_tick)
+                        begin
+                            if (s_reg == (SB_TICK - 1))
+                                begin
+                                    state_next = idle;
+                                    rx_done_tick = 1'b1;
+                                end
+                            else
+                                s_next = s_reg + 1;
+                        end
+                end
             default:
                 begin
                     state_next  = IDLE;
@@ -108,3 +116,4 @@ module uart-rx
         endcase 
     end
     assign dout = b_reg; 
+    endmodule 
