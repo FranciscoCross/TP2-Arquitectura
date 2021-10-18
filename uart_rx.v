@@ -1,7 +1,7 @@
 module uart-rx
     # ( 
-    parameter NB_BIT = 8, // # cantidad de bits por dato 
-    parameter SB_TICK = 16 // # ticks para stop bits 
+    parameter NB_BIT = 8; // # cantidad de bits por dato 
+    parameter SB_TICK = 16; // # ticks para stop bits 
     )
     ( 
     input wire clk,
@@ -9,7 +9,7 @@ module uart-rx
     input wire rx,
     input wire s_tick,
     output reg rx_done_tick, 
-    output wire [7:0] dout 
+    output wire [NB_BIT - 1:0] dout 
     );
 
     //Declaracion de los estados de UART_RX
