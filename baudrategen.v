@@ -6,31 +6,18 @@ module baudrategen
     (
         input wire clock,
         input wire reset,
-        output reg tick
+        output wire tick
     );
 
     reg [N_BITS-1:0] count;
+    wire reset_counter = (count == N_COUNT-1) ? 1'b1 : 1'b0;
 
     always @(posedge clock)
-    begin : counter
-        if(reset)
-        begin
-            count = 0;
-            tick = 0;
-        end
-        else
-        begin
-            count = count + 1;
-            if(count == N_COUNT) //Cuando el contador alcanza el valor de módulo, se debe reiniciar la cuenta y setear a 1 el tick
-            begin
-                tick = 1;
-                count = 0;
-            end
-            else
-            begin
-                tick = 0; //En cualquier otro valor de contador se debe poner a 0 la señal
-            end
-        end
-
+    begin
+        if(reset) count <= 0;
+        else if (reset_counter) count <= 0;
+        else count = count + 1;        
     end
+
+    assign tick = reset_counter;
 endmodule
