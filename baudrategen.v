@@ -2,7 +2,7 @@ module baudrategen
     #(
         parameter N_BITS = 8
         parameter N_COUNT = 163 //Se espera que cada 163 ciclos de clock generar una señal tick para muestrear
-    )
+    )                           //El valor 163 es para un baudrate de 19200 bauds y un clock de 50MHz (50*10^6 / 19200*16)
     (
         input wire clock,
         input wire reset,
