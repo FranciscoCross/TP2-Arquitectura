@@ -1,7 +1,7 @@
 module uart_tx
     #(
-        parameter DBIT = 8;     //cantidad de bits de dato
-        parameter SB_TICK = 16; // # ticks para stop bits 
+        parameter DBIT = 8,     //cantidad de bits de dato
+        parameter SB_TICK = 16 // # ticks para stop bits 
     )
     (
     input wire clk,
@@ -59,7 +59,7 @@ module uart_tx
         b_next = b_reg;
         tx_next = tx_reg;
 
-        case (state_reg))
+        case (state_reg)
             idle:
                 begin
                     tx_next = 1'b1;
@@ -73,7 +73,7 @@ module uart_tx
 
             start:
                 begin
-                    tx_next = l'b0; 
+                    tx_next = 1'b0;
                     if (s_tick) 
                         if (s_reg == 15) 
                             begin 
@@ -118,7 +118,7 @@ module uart_tx
                                 s_next = s_reg + 1;
                         end
                 end
-            default: 
+            //default: 
             //agregar
         endcase
     end
