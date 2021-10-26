@@ -5,6 +5,7 @@ module uart_tx
     )
     (
     input wire clk,
+    input wire reset,
     input wire tx_start,
     input wire s_tick,
     input wire [DBIT - 1 : 0] din,
@@ -25,8 +26,8 @@ module uart_tx
     reg [3 : 0] s_next; 
     reg [2 : 0] n_reg; 
     reg [2 : 0] n_next; 
-    reg [NB_BIT - 1 : 0] b_reg; 
-    reg [NB_BIT - 1 : 0] b_next;
+    reg [DBIT - 1 : 0] b_reg; 
+    reg [DBIT - 1 : 0] b_next;
     reg tx_reg;
     reg tx_next;
 
@@ -75,14 +76,16 @@ module uart_tx
                 begin
                     tx_next = 1'b0;
                     if (s_tick) 
-                        if (s_reg == 15) 
-                            begin 
-                            state_next = data; 
-                            s_next = 0; 
-                            n_next = 0; 
-                            end 
-                        else 
-                            s_next = s_reg + 1;     
+                        begin
+                            if (s_reg == 15) 
+                                begin 
+                                state_next = data; 
+                                s_next = 0; 
+                                n_next = 0; 
+                                end 
+                            else 
+                                s_next = s_reg + 1;     
+                        end
                 end
 
             data:
@@ -95,7 +98,10 @@ module uart_tx
                                     s_next = 0;
                                     b_next = b_reg >> 1;
                                     if (n_reg == (DBIT - 1)) 
+                                        begin
                                         state_next = stop;
+                                        n_next = 0;
+                                        end
                                     else
                                         n_next = n_reg + 1;
                                 end
