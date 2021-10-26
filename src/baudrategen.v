@@ -1,3 +1,4 @@
+`timescale 10ns / 1ps //10ns es el semi ciclo, un ciclo entero tiene 20ns osea 50MHz
 module baudrategen
     #(
         parameter N_BITS = 8,

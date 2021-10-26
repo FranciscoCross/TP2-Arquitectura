@@ -20,7 +20,7 @@ initial begin
 
     //#1 reset = 0;
     
-    #400 $finish;
+    #400000 $finish;
 
 end
 
