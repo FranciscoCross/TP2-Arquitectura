@@ -88,29 +88,32 @@ module uart_rx
                             if (s_reg == ((SB_TICK/2) - 1))           //chequiamos que el tick sea la mitad del muestreo
                                 begin
                                     state_next = data;                //si es asi pasamos al estados para recibir los datos
-                                s_next = 0;                           //limpiamos el registro que cuenta los ticks
+                                    s_next = 0;                       //limpiamos el registro que cuenta los ticks
                                     n_next = 0;                       //limpiamos el registro que lleva la cuenta de los bits recibidos
-                                end    
+                                end 
+                            else
+                                s_next = s_reg + 1;                           //si no seguimos contando los ticks   
                         end
-                    else
-                        s_next = s_reg + 1;                           //si no seguimos contando los ticks
                 end
             data:
                 begin
                     if (s_tick)
                         begin
-                            if (s_reg == (SB_TICK - 1))
+                            if (s_reg == 15)
                                 begin
+                                    n_next = n_reg + 1;                 //si aumentamos el contador que lleva la cuenta de los bits recibidos
                                     s_next = 0;                         //tenemos el bit por ende reiniciamos el contador de ticks
                                     b_next = {rx, b_reg[NB_BIT - 1:1]}; //ponemos el bit en el registro b 
-                                    if(n_reg == (DBIT-1))               //chequiamos si es el ultimo bit de lo necesario (8)
-                                        state_next = stop;              //si es asi pasamos al estado stop
-                                    else
-                                        n_next = n_reg + 1;             //si aumentamos el contador que lleva la cuenta de los bits recibidos
-                                end    
-                        end
-                    else
-                        s_next = s_reg + 1;                              //si no seguimos contando los ticks
+                                    if(n_reg == (NB_BIT-1))             //chequiamos si es el ultimo bit de lo necesario (8)
+                                        begin
+                                            state_next = stop;          //si es asi pasamos al estado stop
+                                            n_next = 0;
+                                        end
+                                end
+                            else
+                                    
+                                    s_next = s_reg + 1;                 //si no seguimos contando los ticks
+                        end 
                 end
             stop:
                 begin
@@ -130,7 +133,7 @@ module uart_rx
             //Default que agregamos nosotros porque no tenia
             default:
                 begin
-                    state_next  = IDLE;
+                    state_next  = idle;
                     b_next      = 0;
                 end
         endcase 
