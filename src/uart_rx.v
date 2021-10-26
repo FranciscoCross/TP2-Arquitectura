@@ -30,14 +30,16 @@ module uart_rx
     );
 
     //Declaracion de los estados de UART_RX
-    localparam [1 : 0] idle  = 2'b00;
-    localparam [1 : 0] start = 2'b01;
-    localparam [1 : 0] data  = 2'b10;
-    localparam [1 : 0] stop  = 2'b11;
+    localparam [2 : 0] idle   = 3'b000;
+    localparam [2 : 0] start  = 3'b001;
+    localparam [2 : 0] data   = 3'b010;
+    localparam [2 : 0] parity = 3'b011;
+    localparam [2 : 0] stop   = 3'b100;
+    
 
     //Declaracion de las seniales
-    reg [1 : 0] state_reg;
-    reg [1 : 0] state_next; 
+    reg [2 : 0] state_reg;
+    reg [2 : 0] state_next; 
     reg [3 : 0] s_reg;
     reg [3 : 0] s_next; 
     reg [2 : 0] n_reg; 
@@ -106,7 +108,7 @@ module uart_rx
                                     b_next = {rx, b_reg[NB_BIT - 1:1]}; //ponemos el bit en el registro b 
                                     if(n_reg == (NB_BIT-1))             //chequiamos si es el ultimo bit de lo necesario (8)
                                         begin
-                                            state_next = stop;          //si es asi pasamos al estado stop
+                                            state_next = parity;          //si es asi pasamos al estado stop
                                             n_next = 0;
                                         end
                                 end
@@ -115,6 +117,26 @@ module uart_rx
                                     s_next = s_reg + 1;                 //si no seguimos contando los ticks
                         end 
                 end
+
+            parity:
+                begin
+                    if (s_tick)
+                    begin
+                        if (s_reg == 15)
+                            begin
+                                s_next = 0;                         //tenemos el bit por ende reiniciamos el contador de ticks
+                                if(rx == (^b_reg))                  //chequiamos parity
+                                    begin
+                                        state_next = stop;          //si es asi pasamos al estado stop
+                                    end
+                                else
+                                    state_next = idle;
+                            end
+                        else
+                            s_next = s_reg + 1;     
+                    end    
+                end
+
             stop:
                 begin
                     if (s_tick)
