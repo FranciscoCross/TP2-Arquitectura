@@ -3,7 +3,7 @@
     SB_TICK constante que indica el numero de ticks que se necesitan para los bits de stop (16,24,32) para (1, 1.5, 2) bits de stop
 
     Tres estados mayores start data stop que representan el proceso de start bit, bits de datos, bit de stop
-    La "s_tick" signal es el tick habilitador del baudrate generator y hay 16 ticks en un interbalo de bits
+    La "s_tick" signal es el tick habilitador del baudrate generator y hay 16 ticks en un intervalo de 1 bit
 
     Luego tenemos dos contadores "s" (mantienen un registro de cuenta sobre los ticks) y "n" (realiza un seguimiento de los bits de datos recibidos)
     los bits de datos recuperados se shiftean y de ensamblan en "b" 
