@@ -14,14 +14,15 @@ module uart_tx
     );
 
     //Declaracion de los estados
-    localparam [1 : 0] idle  = 2'b00;
-    localparam [1 : 0] start = 2'b01;
-    localparam [1 : 0] data  = 2'b10;
-    localparam [1 : 0] stop  = 2'b11;
+    localparam [2 : 0] idle    = 3'b000;
+    localparam [2 : 0] start   = 3'b001;
+    localparam [2 : 0] data    = 3'b010;
+    localparam [2 : 0] parity  = 3'b011;
+    localparam [2 : 0] stop    = 3'b100;
 
     //Declaracion de las seniales
-    reg [1 : 0] state_reg;
-    reg [1 : 0] state_next; 
+    reg [2 : 0] state_reg;
+    reg [2 : 0] state_next; 
     reg [3 : 0] s_reg;
     reg [3 : 0] s_next; 
     reg [2 : 0] n_reg; 
@@ -99,7 +100,7 @@ module uart_tx
                                     b_next = b_reg >> 1;
                                     if (n_reg == (DBIT - 1)) 
                                         begin
-                                        state_next = stop;
+                                        state_next = parity;
                                         n_next = 0;
                                         end
                                     else
@@ -109,7 +110,22 @@ module uart_tx
                                 s_next = s_reg + 1;
                         end
                 end
-            
+            parity:
+                begin
+                    if (s_tick)
+                        begin
+                            if (s_reg == (SB_TICK - 1))
+                                begin
+                                    s_next = 0;
+                                    tx_next =  (^b_reg);  
+                                    state_next = stop;   
+                                end
+                            else
+                                s_next = s_reg + 1;
+                                
+                        end
+                end
+
             stop:
                 begin
                     tx_next = 1'b1;

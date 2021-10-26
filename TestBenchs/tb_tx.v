@@ -18,7 +18,7 @@ initial begin
     clk = 1;
     reset = 1;
     tx_start = 0;
-    DatoTrasmi = 10100111;
+    DatoTrasmi = 8'b10100111;
     #100 tx_start = 1;
     //tick = 0;
     
