@@ -34,7 +34,7 @@ module uart_tx
     reg paridad;
 
     //maquina de estados para los estados y datos
-    always @(posedge clk, posedge reset)begin
+    always @(posedge clk)begin
         if (reset)
             begin
                 state_reg <= idle;
