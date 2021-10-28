@@ -46,6 +46,7 @@ module uart_rx
     reg [2 : 0] n_next; 
     reg [NB_BIT - 1 : 0] b_reg; 
     reg [NB_BIT - 1 : 0] b_next;
+    reg pari;
 
     //maquina de estados para los estados y datos
     always @( posedge clk , posedge reset) begin
@@ -108,6 +109,7 @@ module uart_rx
                                     b_next = {rx, b_reg[NB_BIT - 1:1]}; //ponemos el bit en el registro b 
                                     if(n_reg == (NB_BIT-1))             //chequiamos si es el ultimo bit de lo necesario (8)
                                         begin
+                                            pari = (^b_next);
                                             state_next = parity;          //si es asi pasamos al estado stop
                                             n_next = 0;
                                         end
@@ -125,7 +127,7 @@ module uart_rx
                         if (s_reg == 15)
                             begin
                                 s_next = 0;                         //tenemos el bit por ende reiniciamos el contador de ticks
-                                if(rx == (^b_reg))                  //chequiamos parity
+                                if(rx == pari)                  //chequiamos parity
                                     begin
                                         state_next = stop;          //si es asi pasamos al estado stop
                                     end

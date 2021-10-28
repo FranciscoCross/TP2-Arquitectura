@@ -31,6 +31,7 @@ module uart_tx
     reg [DBIT - 1 : 0] b_next;
     reg tx_reg;
     reg tx_next;
+    reg paridad;
 
     //maquina de estados para los estados y datos
     always @(posedge clk, posedge reset)begin
@@ -100,6 +101,7 @@ module uart_tx
                                     b_next = b_reg >> 1;
                                     if (n_reg == (DBIT - 1)) 
                                         begin
+                                        paridad = (^din);
                                         state_next = parity;
                                         n_next = 0;
                                         end
@@ -112,13 +114,14 @@ module uart_tx
                 end
             parity:
                 begin
+                    tx_next = paridad;
                     if (s_tick)
                         begin
-                            if (s_reg == (SB_TICK - 1))
+                            if (s_reg == 15)
                                 begin
-                                    s_next = 0;
-                                    tx_next =  (^b_reg);  
-                                    state_next = stop;   
+                                    //tx_next =  (^b_reg);
+                                    state_next = stop; 
+                                    s_next = 0;  
                                 end
                             else
                                 s_next = s_reg + 1;
