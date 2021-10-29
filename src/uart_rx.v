@@ -100,25 +100,22 @@ module uart_rx
                 end
             data:
                 begin
-                    if (s_tick)
+                    if (s_reg == (SB_TICK-1) and s_tick)
                         begin
-                            if (s_reg == 15 and s_tick)
+                            n_next = n_reg + 1;                 //si aumentamos el contador que lleva la cuenta de los bits recibidos
+                            s_next = 0;                         //tenemos el bit por ende reiniciamos el contador de ticks
+                            b_next = {rx, b_reg[N_BITS - 1:1]}; //ponemos el bit en el registro b 
+                            if(n_reg == (N_BITS-1))             //chequiamos si es el ultimo bit de lo necesario (8)
                                 begin
-                                    n_next = n_reg + 1;                 //si aumentamos el contador que lleva la cuenta de los bits recibidos
-                                    s_next = 0;                         //tenemos el bit por ende reiniciamos el contador de ticks
-                                    b_next = {rx, b_reg[N_BITS - 1:1]}; //ponemos el bit en el registro b 
-                                    if(n_reg == (N_BITS-1))             //chequiamos si es el ultimo bit de lo necesario (8)
-                                        begin
-                                            pari = (^b_next);
-                                            state_next = parity;          //si es asi pasamos al estado stop
-                                            n_next = 0;
-                                        end
+                                    pari = (^b_next);
+                                    state_next = parity;          //si es asi pasamos al estado stop
+                                    n_next = 0;
                                 end
-                            else
-                                    
-                                    s_next = s_reg + 1;                 //si no seguimos contando los ticks
-                        end 
-                end
+                        end
+                    else
+                            
+                            s_next = s_reg + 1;                 //si no seguimos contando los ticks
+                end 
 
             parity:
                 begin
