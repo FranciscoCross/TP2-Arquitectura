@@ -1,14 +1,17 @@
 `timescale 10ns / 1ps //10ns es el semi ciclo, un ciclo entero tiene 20ns osea 50MHz
 
 module tb_uart_top;
+localparam N_BITS = 8;
+localparam SB_TICK = 16;
+localparam N_COUNT = 163;
 reg clk;
 reg reset;
 reg [31:0] c;
 always #1 c = c + 1;
 always #1 clk = ~clk;
 reg tx_start;
-reg [7:0] DatoEnviar;
-wire [7:0] RES;
+reg [N_BITS - 1:0] DatoEnviar;
+wire [N_BITS - 1:0] RES;
 wire rx_res_done;
 
 initial begin
@@ -32,7 +35,7 @@ end
 
 
 uart_top #(
-    .NB_BITS(8),
+    .N_BITS(8),
     .SB_TICK(16),
     .N_COUNT(163)
 )

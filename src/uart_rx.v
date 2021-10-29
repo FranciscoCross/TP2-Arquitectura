@@ -1,5 +1,5 @@
 /*RECEPTOR 
-    NB_BIT constante que indica el numero de bits de datos
+    N_BITS constante que indica el numero de bits de datos
     SB_TICK constante que indica el numero de ticks que se necesitan para los bits de stop (16,24,32) para (1, 1.5, 2) bits de stop
 
     Tres estados mayores start data stop que representan el proceso de start bit, bits de datos, bit de stop
@@ -17,7 +17,7 @@
 
 module uart_rx
     # ( 
-    parameter NB_BIT = 8, // # cantidad de bits por dato 
+    parameter N_BITS = 8, // # cantidad de bits por dato 
     parameter SB_TICK = 16 // # ticks para stop bits 
     )
     ( 
@@ -26,7 +26,7 @@ module uart_rx
     input wire rx,
     input wire s_tick,
     output reg rx_done_tick, 
-    output wire [NB_BIT - 1:0] dout 
+    output wire [N_BITS - 1:0] dout 
     );
 
     //Declaracion de los estados de UART_RX
@@ -44,8 +44,8 @@ module uart_rx
     reg [3 : 0] s_next; 
     reg [2 : 0] n_reg; 
     reg [2 : 0] n_next; 
-    reg [NB_BIT - 1 : 0] b_reg; 
-    reg [NB_BIT - 1 : 0] b_next;
+    reg [N_BITS - 1 : 0] b_reg; 
+    reg [N_BITS - 1 : 0] b_next;
     reg pari;
 
     //maquina de estados para los estados y datos
@@ -102,12 +102,12 @@ module uart_rx
                 begin
                     if (s_tick)
                         begin
-                            if (s_reg == 15)
+                            if (s_reg == (SB_TICK - 1))
                                 begin
                                     n_next = n_reg + 1;                 //si aumentamos el contador que lleva la cuenta de los bits recibidos
                                     s_next = 0;                         //tenemos el bit por ende reiniciamos el contador de ticks
-                                    b_next = {rx, b_reg[NB_BIT - 1:1]}; //ponemos el bit en el registro b 
-                                    if(n_reg == (NB_BIT-1))             //chequiamos si es el ultimo bit de lo necesario (8)
+                                    b_next = {rx, b_reg[N_BITS - 1:1]}; //ponemos el bit en el registro b 
+                                    if(n_reg == (N_BITS-1))             //chequiamos si es el ultimo bit de lo necesario (8)
                                         begin
                                             pari = (^b_next);
                                             state_next = parity;          //si es asi pasamos al estado stop
@@ -124,7 +124,7 @@ module uart_rx
                 begin
                     if (s_tick)
                     begin
-                        if (s_reg == 15)
+                        if (s_reg == (SB_TICK - 1))
                             begin
                                 s_next = 0;                         //tenemos el bit por ende reiniciamos el contador de ticks
                                 if(rx == pari)                  //chequiamos parity

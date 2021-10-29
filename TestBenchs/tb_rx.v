@@ -3,6 +3,7 @@
 module tb_rx;
 localparam N_BITS = 8;
 localparam N_COUNT = 163;
+localparam SB_TICK = 16;
 reg clk;
 reg reset;
 wire tick;
@@ -43,7 +44,7 @@ u_baudrategen(
 );
 
 uart_rx #(
-    .NB_BIT(N_BITS),
+    .N_BITS(N_BITS),
     .SB_TICK(16)
 )
 u_uart_rx(

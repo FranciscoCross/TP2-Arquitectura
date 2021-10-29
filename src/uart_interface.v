@@ -1,17 +1,17 @@
 module uart_interface
 #(
-    parameter  NB_BITS         = 8
+    parameter  N_BITS         = 8
 )
 (
     input wire                   clk,
     input wire                   reset,
-    input wire  [NB_BITS-1 : 0]  i_dato_Recv,
+    input wire  [N_BITS-1 : 0]  i_dato_Recv,
     input wire                   i_dato_Recv_valid,
 
     output wire                  o_tx_start,
-    output wire [NB_BITS-1 : 0]  o_A,
-    output wire [NB_BITS-1 : 0]  o_B,
-    output wire [NB_BITS-1 : 0]  o_OP
+    output wire [N_BITS-1 : 0]  o_A,
+    output wire [N_BITS-1 : 0]  o_B,
+    output wire [N_BITS-1 : 0]  o_OP
     );
   
     localparam  [1 : 0] DATO_A  = 2'b00;
@@ -20,9 +20,9 @@ module uart_interface
 
     reg [1 : 0]         state_reg;
     reg [1 : 0]         state_reg_next;
-    reg [NB_BITS-1 : 0] A;
-    reg [NB_BITS-1 : 0] B;    
-    reg [NB_BITS-1 : 0] OP;
+    reg [N_BITS-1 : 0] A;
+    reg [N_BITS-1 : 0] B;    
+    reg [N_BITS-1 : 0] OP;
 
     //Flags de recepcion del dato correspondiente
     reg rec_A;
@@ -55,7 +55,7 @@ module uart_interface
     always @(posedge clk)
     begin
         if(reset)
-            A  <=  {NB_BITS{1'b0}};
+            A  <=  {N_BITS{1'b0}};
         else if(rec_A)
             A <=   i_dato_Recv;
     end
@@ -64,7 +64,7 @@ module uart_interface
     always @(posedge clk)
     begin
         if(reset)
-            B  <=  {NB_BITS{1'b0}};
+            B  <=  {N_BITS{1'b0}};
         else if(rec_B)
             B <=  i_dato_Recv;
     end
@@ -73,9 +73,9 @@ module uart_interface
     always @(posedge clk)
     begin
         if(reset)
-            OP  <= {NB_BITS{1'b0}};
+            OP  <= {N_BITS{1'b0}};
         else if(rec_OP)
-            OP <=   i_dato_Recv[NB_BITS-1 : 0];
+            OP <=   i_dato_Recv[N_BITS-1 : 0];
     end
 
     //Para actualizar el valor si se tiene que trasmitir el resultado o no

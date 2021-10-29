@@ -1,8 +1,9 @@
 `timescale 10ns / 1ps //10ns es el semi ciclo, un ciclo entero tiene 20ns osea 50MHz
 
 module tb_interface;
-localparam NB_BITS = 8;
+localparam N_BITS = 8;
 localparam N_COUNT = 163;
+localparam SB_TICK = 16;
 reg clk;
 reg reset;
 wire tick;
@@ -75,7 +76,7 @@ end
 
 
 baudrategen #(
-    .N_BITS(NB_BITS),
+    .N_BITS(N_BITS),
     .N_COUNT(N_COUNT)
 )
 u_baudrategen(
@@ -85,8 +86,8 @@ u_baudrategen(
 );
 
 uart_rx #(
-    .NB_BIT(NB_BITS),
-    .SB_TICK(16)
+    .N_BITS(N_BITS),
+    .SB_TICK(SB_TICK)
 )
 u_uart_rx(
     .clk(clk),
@@ -98,7 +99,7 @@ u_uart_rx(
 );
 
 uart_interface #(
-    .NB_BITS(NB_BITS)
+    .N_BITS(N_BITS)
 )
 u_uart_interface(
     .clk(clk),
@@ -113,8 +114,8 @@ u_uart_interface(
 
 
 uart_tx #(
-    .DBIT(NB_BITS),
-    .SB_TICK(16)
+    .N_BITS(N_BITS),
+    .SB_TICK(SB_TICK)
 )
 u_uart_tx(
     .clk(clk),
@@ -128,8 +129,8 @@ u_uart_tx(
 
 
 ALU #(
-    .N_BITS(NB_BITS),
-    .N_LEDS(NB_BITS)
+    .N_BITS(N_BITS),
+    .N_LEDS(N_BITS)
 )
 u_ALU(
     .o_res(RES),

@@ -1,6 +1,6 @@
 module uart_tx
     #(
-        parameter DBIT = 8,     //cantidad de bits de dato
+        parameter N_BITS = 8,     //cantidad de bits de dato
         parameter SB_TICK = 16 // # ticks para stop bits 
     )
     (
@@ -8,7 +8,7 @@ module uart_tx
     input wire reset,
     input wire tx_start,
     input wire s_tick,
-    input wire [DBIT - 1 : 0] din,
+    input wire [N_BITS - 1 : 0] din,
     output reg tx_done_tick,
     output wire tx 
     );
@@ -27,14 +27,14 @@ module uart_tx
     reg [3 : 0] s_next; 
     reg [2 : 0] n_reg; 
     reg [2 : 0] n_next; 
-    reg [DBIT - 1 : 0] b_reg; 
-    reg [DBIT - 1 : 0] b_next;
+    reg [N_BITS - 1 : 0] b_reg; 
+    reg [N_BITS - 1 : 0] b_next;
     reg tx_reg;
     reg tx_next;
     reg paridad;
 
     //maquina de estados para los estados y datos
-    always @(posedge clk, posedge reset)begin
+    always @(posedge clk)begin
         if (reset)
             begin
                 state_reg <= idle;
@@ -79,7 +79,7 @@ module uart_tx
                     tx_next = 1'b0;
                     if (s_tick) 
                         begin
-                            if (s_reg == 15) 
+                            if (s_reg == (SB_TICK - 1)) 
                                 begin 
                                 state_next = data; 
                                 s_next = 0; 
@@ -95,11 +95,11 @@ module uart_tx
                     tx_next = b_reg[0];
                     if (s_tick)
                         begin
-                            if (s_reg == 15)
+                            if (s_reg == (SB_TICK - 1))
                                 begin
                                     s_next = 0;
                                     b_next = b_reg >> 1;
-                                    if (n_reg == (DBIT - 1)) 
+                                    if (n_reg == (N_BITS - 1)) 
                                         begin
                                         paridad = (^din);
                                         state_next = parity;
@@ -117,7 +117,7 @@ module uart_tx
                     tx_next = paridad;
                     if (s_tick)
                         begin
-                            if (s_reg == 15)
+                            if (s_reg == (SB_TICK - 1))
                                 begin
                                     //tx_next =  (^b_reg);
                                     state_next = stop; 
