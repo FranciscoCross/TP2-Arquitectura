@@ -49,7 +49,7 @@ module uart_rx
     reg pari;
 
     //maquina de estados para los estados y datos
-    always @( posedge clk , posedge reset) begin
+    always @( posedge clk) begin
         if(reset)
             begin
                 state_reg <= idle;
@@ -102,7 +102,7 @@ module uart_rx
                 begin
                     if (s_tick)
                         begin
-                            if (s_reg == (SB_TICK - 1))
+                            if (s_reg == 15 and s_tick)
                                 begin
                                     n_next = n_reg + 1;                 //si aumentamos el contador que lleva la cuenta de los bits recibidos
                                     s_next = 0;                         //tenemos el bit por ende reiniciamos el contador de ticks
